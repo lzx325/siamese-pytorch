@@ -1,0 +1,13 @@
+epochs: 15
+model_class: Siamese
+lr: [3.0e-6, 1.0e-5, 3.0e-5, 6.0e-05, 1.0e-4, 3.0e-4, 1.0e-3]
+batch_size: [16, 32, 64, 128, 256]
+max_eval_steps: 20
+loss_fn: ["BCEWithLogits","Contrastive"]
+workers: 70
+dataset: ICDAR
+training_data_csv: /data/liz0f/sign_data/train_data.csv
+training_data_dir: /data/liz0f/sign_data/train
+testing_data_csv: /data/liz0f/sign_data/test_data.csv
+testing_data_dir: /data/liz0f/sign_data/test
+multi_gpu: false

@@ -1,0 +1,38 @@
+# exp_code: ICDAR_Siamese2_Contrastive_train
+exp_code: debug
+epochs: 15
+train_dir: ./train_dir
+model_class: Siamese
+# lr: 6.0e-05
+lr: 3.0e-5
+batch_size: 256
+max_eval_steps: 20
+loss_fn: "BCEWithLogits"
+workers: 70
+dataset: ICDAR
+training_data_csv: /data/liz0f/sign_data/train_data.csv
+training_data_dir: /data/liz0f/sign_data/train
+testing_data_csv: /data/liz0f/sign_data/test_data.csv
+testing_data_dir: /data/liz0f/sign_data/test
+multi_gpu: false
+# eval_ckpt_dir: train_dir/ICDAR_Siamese2_Contrastive_train/2021-06-24-20:02:08/ckpt/
+# eval_ckpt_fn:
+#   - epoch-013.pt
+eval_ckpt_dir: train_dir/ICDAR_train/2021-06-23-23:34:06/ckpt
+eval_ckpt_fn:
+  - epoch-001.pt
+  - epoch-002.pt
+  - epoch-003.pt
+  - epoch-004.pt
+  - epoch-005.pt
+  - epoch-006.pt
+  - epoch-007.pt
+  - epoch-010.pt
+
+
+save_every: 100
+show_every: 10
+test_every: 100
+times: 400
+way: 20
+

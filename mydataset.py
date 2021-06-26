@@ -3,6 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 import os
 from numpy.random import choice as npc
 import numpy as np
+import pandas as pd
 import time
 import random
 import torchvision.datasets as dset
@@ -10,7 +11,6 @@ from PIL import Image
 
 
 class OmniglotTrain(Dataset):
-
     def __init__(self, dataPath, transform=None):
         super(OmniglotTrain, self).__init__()
         np.random.seed(0)
@@ -57,7 +57,6 @@ class OmniglotTrain(Dataset):
                 idx2 = random.randint(0, self.num_classes - 1)
             image1 = random.choice(self.datas[idx1])
             image2 = random.choice(self.datas[idx2])
-
         if self.transform:
             image1 = self.transform(image1)
             image2 = self.transform(image2)
@@ -113,8 +112,63 @@ class OmniglotTest(Dataset):
             img2 = self.transform(img2)
         return img1, img2
 
+class OmniglotStaticDataset(Dataset):
+    def __init__(self, summary_csv_fp, pairs_csv_fp, transform=None):
+        super(OmniglotStaticDataset, self).__init__()
+        self.summary_table=pd.read_csv(summary_csv_fp)
+        self.pairs_table=pd.read_csv(pairs_csv_fp)
+        self.transform=transform
+    def __len__(self):
+        return len(self.pairs_table)
+    def __getitem__(self,idx):
+        idx1,idx2,label=self.pairs_table.loc[idx]["index1"],self.pairs_table.loc[idx]["index2"],self.pairs_table.loc[idx]["label"]
+        fp1,fp2=self.summary_table.loc[idx1]["image_fp"],self.summary_table.loc[idx2]["image_fp"]
+        img1=Image.open(fp1).convert('L')
+        img2=Image.open(fp2).convert('L')
+        if self.transform:
+            img1 = self.transform(img1)
+            img2 = self.transform(img2)
+        return img1,img2,np.array([label],dtype=np.float32)
 
+class ICDARDataset(Dataset):
+    def __init__(self, pairs_csv_fp, dir, transform=None):
+        # used to prepare the labels and images path
+        self.df = pd.read_csv(pairs_csv_fp,header=None)
+        self.df.columns = ["image1", "image2", "label"]
+        self.dir = dir
+        self.transform = transform
+
+    def __getitem__(self, index):
+
+        # getting the image path
+        image1_path = os.path.join(self.dir, self.df.iat[index, 0])
+        image2_path = os.path.join(self.dir, self.df.iat[index, 1])
+
+        # Loading the image
+        img0 = Image.open(image1_path)
+        img1 = Image.open(image2_path)
+        img0 = img0.convert("L")
+        img1 = img1.convert("L")
+
+        # Apply image transformations
+        if self.transform is not None:
+            img0 = self.transform(img0)
+            img1 = self.transform(img1)
+
+        return (
+            img0,
+            img1,
+            torch.from_numpy(
+                np.array([int(self.df.iat[index, 2])], dtype=np.float32)
+            ),
+        )
+
+    def __len__(self):
+        return len(self.df)
 # test
 if __name__=='__main__':
-    omniglotTrain = OmniglotTrain('./images_background', 30000*8)
-    print(omniglotTrain)
+    # omniglotTrain = OmniglotTrain('./images_background', 30000*8)
+    # print(omniglotTrain)
+
+    omniglotstatic=OmniglotStaticDataset("omniglot/python/omniglot-summary-evaluation.csv","omniglot/python/omniglot-pairs-evaluation.csv")
+    print(omniglotstatic[0])

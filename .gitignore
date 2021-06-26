@@ -1,3 +1,7 @@
 models/
 omniglot/
 __pycache__/
+train_dir/
+ICDAR-hyper-search/
+.vscode/
+*.swp

@@ -1,0 +1,31 @@
+exp_code: Omniglot_Contrastive_dataparallel
+epochs: 200
+train_dir: ./train_dir
+model_class: Siamese
+lr: 6.0e-05
+batch_size: 3000
+max_eval_steps: 20
+loss_fn: "Contrastive"
+workers: 70
+dataset: Omniglot
+train_data_dir: ./omniglot/python/images_background
+train_pairs_csv_fp: ./omniglot/python/omniglot-pairs-background.csv
+train_summary_csv_fp: ./omniglot/python/omniglot-summary-background.csv
+eval_data_dir: ./omniglot/python/images_evaluation
+eval_pairs_csv_fp: ./omniglot/python/omniglot-pairs-evaluation.csv
+eval_summary_csv_fp: ./omniglot/python/omniglot-summary-evaluation.csv
+# eval_ckpt: train_dir/Omniglot_dataparallel/2021-06-23-16:07:18/ckpt/epoch-003.pt
+eval_ckpt_dir: train_dir/Omniglot_Contrastive_dataparallel/2021-06-24-16:17:18/ckpt
+eval_ckpt_fn: 
+  - epoch-001.pt
+  - epoch-002.pt
+  - epoch-003.pt
+  - epoch-004.pt
+log_freq: 0.2
+min_log_steps_per_epoch: 30
+
+save_every: 100
+show_every: 10
+test_every: 100
+times: 400
+way: 20
